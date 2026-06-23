@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>포인트 적립</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; margin: 0; background: #f2f2f7;
+    }
+    .card {
+      background: #fff; padding: 44px 28px; border-radius: 22px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.10); text-align: center;
+      width: 86%; max-width: 360px;
+    }
+    .icon { font-size: 68px; line-height: 1; margin-bottom: 10px; }
+    .title { font-size: 22px; font-weight: 800; margin: 6px 0; color: #1c1c1e; }
+    .points { font-size: 46px; font-weight: 900; color: #0a84ff; margin: 14px 0; }
+    .sub { color: #6b6b70; font-size: 15px; line-height: 1.55; }
+    .wait { color: #ff9500; }
+    .err { color: #ff3b30; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon" id="icon">⏳</div>
+    <div class="title" id="title">처리 중...</div>
+    <div class="points" id="points" style="display:none"></div>
+    <div class="sub" id="sub">잠시만 기다려 주세요</div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc }
+      from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBB7UQUBA5RMnsu1nViauJw3bdIepfBD0E",
+      authDomain: "sungkyul-creative-challenge.firebaseapp.com",
+      projectId: "sungkyul-creative-challenge",
+      storageBucket: "sungkyul-creative-challenge.firebasestorage.app",
+      messagingSenderId: "246216839301",
+      appId: "1:246216839301:web:6a0651b5ae7a6ec1fa19ec",
+      measurementId: "G-KG78W2XDEZ"
+    };
+
+    // 시연 때 6시간이 길면 아래를 60 * 1000 (=1분) 으로 잠깐 바꾸세요.
+    const COOLDOWN_MS = 6 * 60 * 60 * 1000; // 6시간
+    const POINTS_PER_SCAN = 10;
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const $ = (id) => document.getElementById(id);
+    function render(icon, title, subText, pointVal, subClass) {
+      $("icon").textContent = icon;
+      $("title").textContent = title;
+      $("sub").textContent = subText;
+      $("sub").className = "sub" + (subClass ? " " + subClass : "");
+      const p = $("points");
+      if (pointVal === null) { p.style.display = "none"; }
+      else { p.style.display = "block"; p.textContent = pointVal + " P"; }
+    }
+    function fmtRemain(ms) {
+      const totalMin = Math.ceil(ms / 60000);
+      const h = Math.floor(totalMin / 60);
+      const m = totalMin % 60;
+      if (h > 0) return `약 ${h}시간 ${m}분 후 다시 적립 가능`;
+      return `약 ${m}분 후 다시 적립 가능`;
+    }
+
+    async function run() {
+      const uid = new URLSearchParams(location.search).get("uid");
+      if (!uid) {
+        render("⚠️", "사용자 정보 없음",
+          "주소 뒤에 ?uid=user_001 형식이 빠졌습니다.", null, "err");
+        return;
+      }
+      try {
+        const ref = doc(db, "users", uid);
+        const snap = await getDoc(ref);
+        if (!snap.exists()) {
+          render("⚠️", "등록되지 않은 사용자",
+            `'${uid}' 문서가 Firestore에 없습니다.`, null, "err");
+          return;
+        }
+        const data = snap.data();
+        const now = Date.now();
+        const last = data.lastEarnedAt || 0;
+        const elapsed = now - last;
+
+        if (last && elapsed < COOLDOWN_MS) {
+          render("⏳", "잠시 후 다시 오세요",
+            fmtRemain(COOLDOWN_MS - elapsed), data.points || 0, "wait");
+          return;
+        }
+        const newPoints = (data.points || 0) + POINTS_PER_SCAN;
+        await updateDoc(ref, { points: newPoints, lastEarnedAt: now });
+        render("✅", "적립 완료!",
+          `${data.name || uid}님, +${POINTS_PER_SCAN}P 적립되었습니다.`,
+          newPoints, null);
+      } catch (e) {
+        render("❌", "오류 발생",
+          (e.code === "permission-denied"
+            ? "Firestore 보안 규칙이 쓰기를 막고 있습니다."
+            : e.message), null, "err");
+      }
+    }
+    run();
+  </script>
+</body>
+</html>
