@@ -76,7 +76,7 @@
       const uid = new URLSearchParams(location.search).get("uid");
       if (!uid) {
         render("⚠️", "사용자 정보 없음",
-               null, "");
+       "", null);
         return;
       }
       try {
