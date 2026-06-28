@@ -59,7 +59,6 @@
       measurementId: "G-KG78W2XDEZ"
     };
 
-    // 시연 때 6시간이 길면 아래를 60 * 1000 (=1분) 으로 잠깐 바꾸세요.
     const COOLDOWN_MS = 6 * 60 * 60 * 1000; // 6시간
     const POINTS_PER_SCAN = 10;
 
@@ -86,16 +85,13 @@
       return `약 ${m}분 후 다시 적립 가능`;
     }
 
-    // 로그인/로그아웃 버튼
     $("loginBtn").onclick = () => signInWithPopup(auth, provider).catch(e => {
       render("❌", "로그인 실패", e.message, null, "err");
     });
     $("logoutBtn").onclick = () => signOut(auth);
 
-    // ★ 로그인 상태가 바뀔 때마다 자동 실행
     onAuthStateChanged(auth, (user) => {
       if (!user) {
-        // 로그인 안 됨 → 적립 막고 로그인 버튼 노출
         render("🔒", "직원 로그인이 필요합니다",
           "캐셔 본인 계정으로 로그인하세요", null);
         $("loginBtn").style.display = "block";
@@ -103,7 +99,6 @@
         $("who").textContent = "";
         return;
       }
-      // 로그인 됨 → 적립 로직 실행
       $("loginBtn").style.display = "none";
       $("logoutBtn").style.display = "block";
       $("who").textContent = `직원: ${user.email}`;
@@ -135,7 +130,6 @@
           return;
         }
         const newPoints = (data.points || 0) + POINTS_PER_SCAN;
-        // 보안 규칙이 '직원 + 증가폭 제한'을 서버에서 한 번 더 검증함
         await updateDoc(ref, { points: newPoints, lastEarnedAt: now });
         render("✅", "적립 완료!",
           `${data.name || uid}님, +${POINTS_PER_SCAN}P 적립되었습니다.`,
