@@ -22,6 +22,13 @@
     .sub { color: #6b6b70; font-size: 15px; line-height: 1.55; }
     .wait { color: #ff9500; }
     .err { color: #ff3b30; }
+    .btn {
+      margin-top: 18px; width: 100%; padding: 14px; border: none;
+      border-radius: 14px; background: #0a84ff; color: #fff;
+      font-size: 16px; font-weight: 700; cursor: pointer;
+    }
+    .btn.gray { background: #8e8e93; font-size: 14px; padding: 10px; margin-top: 10px; }
+    .who { color: #8e8e93; font-size: 12px; margin-top: 14px; }
   </style>
 </head>
 <body>
@@ -30,12 +37,17 @@
     <div class="title" id="title">처리 중...</div>
     <div class="points" id="points" style="display:none"></div>
     <div class="sub" id="sub">잠시만 기다려 주세요</div>
+    <button class="btn" id="loginBtn" style="display:none">직원 로그인</button>
+    <button class="btn gray" id="logoutBtn" style="display:none">로그아웃</button>
+    <div class="who" id="who"></div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
     import { getFirestore, doc, getDoc, updateDoc }
       from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+      from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBB7UQUBA5RMnsu1nViauJw3bdIepfBD0E",
@@ -53,6 +65,8 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
     const $ = (id) => document.getElementById(id);
     function render(icon, title, subText, pointVal, subClass) {
@@ -72,11 +86,34 @@
       return `약 ${m}분 후 다시 적립 가능`;
     }
 
-    async function run() {
+    // 로그인/로그아웃 버튼
+    $("loginBtn").onclick = () => signInWithPopup(auth, provider).catch(e => {
+      render("❌", "로그인 실패", e.message, null, "err");
+    });
+    $("logoutBtn").onclick = () => signOut(auth);
+
+    // ★ 로그인 상태가 바뀔 때마다 자동 실행
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        // 로그인 안 됨 → 적립 막고 로그인 버튼 노출
+        render("🔒", "직원 로그인이 필요합니다",
+          "캐셔 본인 계정으로 로그인하세요", null);
+        $("loginBtn").style.display = "block";
+        $("logoutBtn").style.display = "none";
+        $("who").textContent = "";
+        return;
+      }
+      // 로그인 됨 → 적립 로직 실행
+      $("loginBtn").style.display = "none";
+      $("logoutBtn").style.display = "block";
+      $("who").textContent = `직원: ${user.email}`;
+      run(user);
+    });
+
+    async function run(user) {
       const uid = new URLSearchParams(location.search).get("uid");
       if (!uid) {
-        render("⚠️", "사용자 정보 없음",
-       "", null);
+        render("⚠️", "사용자 정보 없음", "", null, "err");
         return;
       }
       try {
@@ -98,6 +135,7 @@
           return;
         }
         const newPoints = (data.points || 0) + POINTS_PER_SCAN;
+        // 보안 규칙이 '직원 + 증가폭 제한'을 서버에서 한 번 더 검증함
         await updateDoc(ref, { points: newPoints, lastEarnedAt: now });
         render("✅", "적립 완료!",
           `${data.name || uid}님, +${POINTS_PER_SCAN}P 적립되었습니다.`,
@@ -105,11 +143,10 @@
       } catch (e) {
         render("❌", "오류 발생",
           (e.code === "permission-denied"
-            ? "Firestore 보안 규칙이 쓰기를 막고 있습니다."
+            ? "권한 없음: 직원 계정이 아니거나 규칙이 막았습니다."
             : e.message), null, "err");
       }
     }
-    run();
   </script>
 </body>
 </html>
