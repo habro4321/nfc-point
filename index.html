@@ -2,43 +2,194 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>포인트 적립</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#E3E7E1" />
+  <title>GREEN SIGNAL — 포인트 적립</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
   <style>
-    * { box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
-      display: flex; align-items: center; justify-content: center;
-      min-height: 100vh; margin: 0; background: #f2f2f7;
-    }
-    .card {
-      background: #fff; padding: 44px 28px; border-radius: 22px;
-      box-shadow: 0 10px 40px rgba(0,0,0,.10); text-align: center;
-      width: 86%; max-width: 360px;
-    }
-    .icon { font-size: 68px; line-height: 1; margin-bottom: 10px; }
-    .title { font-size: 22px; font-weight: 800; margin: 6px 0; color: #1c1c1e; }
-    .points { font-size: 46px; font-weight: 900; color: #0a84ff; margin: 14px 0; }
-    .sub { color: #6b6b70; font-size: 15px; line-height: 1.55; }
-    .wait { color: #ff9500; }
-    .err { color: #ff3b30; }
-    .btn {
-      margin-top: 18px; width: 100%; padding: 14px; border: none;
-      border-radius: 14px; background: #0a84ff; color: #fff;
-      font-size: 16px; font-weight: 700; cursor: pointer;
-    }
-    .btn.gray { background: #8e8e93; font-size: 14px; padding: 10px; margin-top: 10px; }
-    .who { color: #8e8e93; font-size: 12px; margin-top: 14px; }
+  /* ============================================================
+     GREEN SIGNAL — 직원용 적립 화면
+     view.html 과 같은 색·폰트 체계를 사용합니다.
+     ============================================================ */
+  :root{
+    --page:#E3E7E1;
+    --card:#FAFBF8;
+    --ink:#141815;
+    --ink-2:#5C6660;
+    --hair:#DDE3DC;
+
+    --mint:#33C6AB;
+    --amber:#D9922B;
+    --red:#DC5348;
+
+    /* 상태에 따라 아래 3개가 바뀝니다 (기본 = 성공/민트) */
+    --accent:var(--mint);
+    --tint:rgba(51,198,171,.13);
+    --halo:rgba(51,198,171,.07);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",system-ui,sans-serif;
+    background:var(--page);
+    color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    padding:24px 16px calc(24px + env(safe-area-inset-bottom));
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- 카드 ---------- */
+  .card{
+    width:100%; max-width:380px;
+    background:var(--card);
+    border-radius:26px;
+    padding:24px 24px 20px;
+    box-shadow:0 20px 44px -22px rgba(20,24,21,.32);
+    animation:rise .45s cubic-bezier(.22,.68,.3,1) both;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  /* ---------- 상단 라벨 ---------- */
+  .eyebrow{
+    display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+    font-family:'DM Mono',ui-monospace,monospace;
+    font-size:10px; letter-spacing:.13em; text-transform:uppercase;
+    color:var(--ink-2);
+    padding-bottom:16px; border-bottom:1px solid var(--hair);
+  }
+  .eyebrow strong{color:var(--ink);font-weight:500;letter-spacing:.18em;flex:none}
+  .eyebrow span{display:inline-flex;align-items:center;gap:6px}
+  .eyebrow span::before{
+    content:"";width:6px;height:6px;border-radius:50%;
+    background:var(--accent);transition:background .45s ease;
+  }
+
+  /* ---------- 본문 ---------- */
+  .body{padding:26px 0 6px;text-align:center}
+
+  .iconwrap{
+    width:98px;height:98px;margin:0 auto 20px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--tint);
+    box-shadow:0 0 0 11px var(--halo);
+    transition:background .45s ease, box-shadow .45s ease;
+  }
+  .icon{
+    font-size:46px;line-height:1;
+    animation:pop .5s cubic-bezier(.2,1.5,.5,1) both;
+  }
+  @keyframes pop{from{transform:scale(.5);opacity:0}to{transform:none;opacity:1}}
+
+  .title{
+    font-size:20px;font-weight:700;letter-spacing:-.02em;
+    color:var(--ink);line-height:1.4;
+  }
+
+  .points{
+    font-size:58px;font-weight:800;letter-spacing:-.045em;line-height:1;
+    color:var(--accent);
+    margin:16px 0 2px;
+    font-variant-numeric:tabular-nums;
+    transition:color .45s ease;
+  }
+
+  .sub{
+    margin-top:10px;
+    font-size:13.5px;line-height:1.65;color:var(--ink-2);
+    word-break:break-word;
+  }
+  .sub:empty{display:none}
+  .sub.wait{color:var(--amber);font-weight:500}
+  .sub.err{color:var(--red);font-weight:500}
+
+  /* ---------- 상태별 테마 (JS 없이 CSS 로만 전환) ---------- */
+  .card:has(#sub.wait){
+    --accent:var(--amber);
+    --tint:rgba(217,146,43,.13);
+    --halo:rgba(217,146,43,.07);
+  }
+  .card:has(#sub.err){
+    --accent:var(--red);
+    --tint:rgba(220,83,72,.12);
+    --halo:rgba(220,83,72,.06);
+  }
+
+  /* ---------- 버튼 ---------- */
+  .btn{
+    font-family:inherit;
+    margin-top:22px; width:100%;
+    padding:14px 18px; border:0; border-radius:14px;
+    background:#191D1A; color:#F2F5F1;
+    font-size:14.5px; font-weight:600; letter-spacing:-.01em;
+    cursor:pointer;
+    transition:transform .12s ease, opacity .2s ease;
+  }
+  .btn:hover{opacity:.9}
+  .btn:active{transform:scale(.975)}
+  .btn:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
+
+  .btn.gray{
+    background:transparent; color:var(--ink-2);
+    border:1px solid var(--hair);
+    font-size:13px; font-weight:500; padding:11px;
+    margin-top:9px;
+  }
+  .btn.gray:hover{background:#F0F2EE;opacity:1}
+
+  .btn-inner{display:inline-flex;align-items:center;justify-content:center;gap:9px}
+  .btn-inner svg{width:17px;height:17px;flex:none}
+
+  /* ---------- 하단 ---------- */
+  .who{
+    font-family:'DM Mono',ui-monospace,monospace;
+    font-size:10.5px; letter-spacing:.04em; color:#9AA39D;
+    text-align:center;
+    margin-top:18px; padding-top:14px;
+    border-top:1px solid var(--hair);
+    word-break:break-all;
+  }
+  .who:empty{display:none}
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important;animation:none!important}
+  }
   </style>
 </head>
 <body>
   <div class="card">
-    <div class="icon" id="icon">⏳</div>
-    <div class="title" id="title">처리 중...</div>
-    <div class="points" id="points" style="display:none"></div>
-    <div class="sub" id="sub">잠시만 기다려 주세요</div>
-    <button class="btn" id="loginBtn" style="display:none">직원 로그인</button>
-    <button class="btn gray" id="logoutBtn" style="display:none">로그아웃</button>
+
+    <div class="eyebrow">
+      <strong>GREEN SIGNAL</strong>
+      <span>STAFF</span>
+    </div>
+
+    <div class="body">
+      <div class="iconwrap"><div class="icon" id="icon">⏳</div></div>
+      <div class="title" id="title">처리 중...</div>
+      <div class="points" id="points" style="display:none"></div>
+      <div class="sub" id="sub">잠시만 기다려 주세요</div>
+
+      <button class="btn" id="loginBtn" style="display:none">
+        <span class="btn-inner">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/>
+            <path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+            <path fill="#4CAF50" d="M24 44c5.2 0 9.8-2 13.3-5.2l-6.2-5.2C29.1 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/>
+            <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.2 5.6l6.2 5.2C36.9 39.7 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/>
+          </svg>
+          직원 로그인
+        </span>
+      </button>
+
+      <button class="btn gray" id="logoutBtn" style="display:none">로그아웃</button>
+    </div>
+
     <div class="who" id="who"></div>
   </div>
 
