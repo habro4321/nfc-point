@@ -51,6 +51,7 @@ p{margin:0}
 .spacer{flex:1}
 .gate{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--page);text-align:center}
 .gate p{max-width:290px;font-size:15px;font-weight:600;line-height:1.6;color:var(--ink2)}
+.gate button{margin-top:18px;height:48px;min-width:140px;padding:0 24px;border:0;border-radius:14px;background:var(--btn);color:var(--on-btn);font-size:15px;font-weight:600}
 .gate small{display:block;margin-top:6px;font-size:12.5px;font-weight:500;color:var(--ink3)}
 #authBtn{max-width:62vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
@@ -1015,13 +1016,17 @@ window.addEventListener('resize', ()=>{ renderBg(); if(!document.body.classList.
 document.addEventListener('visibilitychange', ()=>{ if(document.hidden) save(); });
 
 /* ---------- firebase: login / earn / boot ---------- */
-function gate(msg, sub){ const g=$('#gate'); g.hidden=false; g.innerHTML='<p>'+esc(msg)+(sub?'<small>'+esc(sub)+'</small>':'')+'</p>'; }
+function gate(msg, sub, btn){
+  const g=$('#gate'); g.hidden=false;
+  g.innerHTML='<div><p>'+esc(msg)+(sub?'<small>'+esc(sub)+'</small>':'')+'</p>'+(btn?'<button id="gateLogin">로그인</button>':'')+'</div>';
+  const b=$('#gateLogin'); if(b) b.addEventListener('click', login);
+}
 function fmtLeft(ms){ const m=Math.ceil(ms/60000), h=Math.floor(m/60); return h>0 ? h+'시간 '+(m%60)+'분' : m+'분'; }
 function renderAuth(){ $('#authBtn').textContent = staff ? String(staff.email||'계정').split('@')[0]+' · 로그아웃' : '로그인'; }
-$('#authBtn').addEventListener('click', ()=>{
-  if(staff){ signOut(auth); return; }
+function login(){
   signInWithPopup(auth, provider).catch(e=>{ if(e.code!=='auth/popup-closed-by-user' && e.code!=='auth/cancelled-popup-request') toast('로그인하지 못했어요'); });
-});
+}
+$('#authBtn').addEventListener('click', ()=>{ if(staff) signOut(auth); else login(); });
 async function tryEarn(){
   if(!ready || !staff || earnTried) return;
   earnTried = true;
@@ -1042,7 +1047,13 @@ async function tryEarn(){
     toast((S.name||UID)+'님 +'+POINTS_PER_SCAN+'P 적립됐어요');
   }catch(e){ toast(e.code==='permission-denied' ? '이 계정으로는 적립할 수 없어요' : '적립하지 못했어요. 다시 시도해 주세요'); }
 }
-onAuthStateChanged(auth, u=>{ staff = u; earnTried = false; renderAuth(); tryEarn(); });
+let booted = false, booting = false;
+onAuthStateChanged(auth, u=>{
+  staff = u; earnTried = false; renderAuth();
+  if(!u){ gate('로그인이 필요해요', '로그인하면 내 텀블러를 볼 수 있어요', true); return; }
+  if(booted){ $('#gate').hidden = true; tryEarn(); return; }
+  if(!booting){ booting = true; boot().then(()=>{ booting = false; }); }
+});
 async function boot(){
   if(!UID){ gate('사용자 정보가 없어요', '주소 뒤에 ?uid=user001 처럼 사용자 번호를 붙여 주세요'); return; }
   try{
@@ -1053,13 +1064,12 @@ async function boot(){
   }catch(e){ gate('불러오지 못했어요', e.code==='permission-denied' ? '읽기 권한이 없어요' : '인터넷 연결을 확인해 주세요'); return; }
   fix(); disp = level();
   lastLook = JSON.stringify({cup:S.cup, bg:S.bg, seenAt:S.seenAt}); synced = lookKey(lookOf());
-  ready = true; $('#gate').hidden = true;
+  ready = true; booted = true; $('#gate').hidden = true;
   renderBg(); mountCup(); renderPanel(); renderStatus();
   requestAnimationFrame(t=>{ lastT=t; panelRatio(); requestAnimationFrame(frame); });
   setTimeout(()=>{ announce(); save(); }, 700);
   tryEarn();
 }
-boot();
 })();
 </script>
 </body>
