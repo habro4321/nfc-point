@@ -180,7 +180,7 @@ body.editing .panel{visibility:hidden}
   <div class="top">
     <button class="pill" id="tiltBtn" hidden>기울이면 출렁여요</button>
     <span class="spacer"></span>
-    <button class="pill" id="authBtn">직원 로그인</button>
+    <button class="pill" id="authBtn">로그인</button>
   </div>
 
   <section class="stage" aria-label="내 텀블러">
@@ -857,7 +857,7 @@ async function buy(){
       return pts-it.price;
     });
   }catch(e){
-    toast(e.code==='permission-denied' ? '지금은 살 수 없어요. 직원에게 문의해 주세요' : e.message==='short' ? '포인트가 모자라요' : '구매하지 못했어요. 다시 시도해 주세요');
+    toast(e.code==='permission-denied' ? '지금은 살 수 없어요. 권한을 확인해 주세요' : e.message==='short' ? '포인트가 모자라요' : '구매하지 못했어요. 다시 시도해 주세요');
     return;
   }
   const before = S.points;
@@ -1017,7 +1017,7 @@ document.addEventListener('visibilitychange', ()=>{ if(document.hidden) save(); 
 /* ---------- firebase: login / earn / boot ---------- */
 function gate(msg, sub){ const g=$('#gate'); g.hidden=false; g.innerHTML='<p>'+esc(msg)+(sub?'<small>'+esc(sub)+'</small>':'')+'</p>'; }
 function fmtLeft(ms){ const m=Math.ceil(ms/60000), h=Math.floor(m/60); return h>0 ? h+'시간 '+(m%60)+'분' : m+'분'; }
-function renderAuth(){ $('#authBtn').textContent = staff ? String(staff.email||'직원').split('@')[0]+' · 로그아웃' : '직원 로그인'; }
+function renderAuth(){ $('#authBtn').textContent = staff ? String(staff.email||'계정').split('@')[0]+' · 로그아웃' : '로그인'; }
 $('#authBtn').addEventListener('click', ()=>{
   if(staff){ signOut(auth); return; }
   signInWithPopup(auth, provider).catch(e=>{ if(e.code!=='auth/popup-closed-by-user' && e.code!=='auth/cancelled-popup-request') toast('로그인하지 못했어요'); });
@@ -1040,7 +1040,7 @@ async function tryEarn(){
     announce(); save(); renderPanel(); renderStatus(); animatePts(before);
     if(sheet.classList.contains('open')) renderSheet();
     toast((S.name||UID)+'님 +'+POINTS_PER_SCAN+'P 적립됐어요');
-  }catch(e){ toast(e.code==='permission-denied' ? '직원 계정이 아니라서 적립할 수 없어요' : '적립하지 못했어요. 다시 시도해 주세요'); }
+  }catch(e){ toast(e.code==='permission-denied' ? '이 계정으로는 적립할 수 없어요' : '적립하지 못했어요. 다시 시도해 주세요'); }
 }
 onAuthStateChanged(auth, u=>{ staff = u; earnTried = false; renderAuth(); tryEarn(); });
 async function boot(){
