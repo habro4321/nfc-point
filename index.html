@@ -61,7 +61,7 @@ p,h1,h2{margin:0}
 .top{position:relative;display:flex;align-items:center;gap:8px;padding:8px 16px 0 20px;min-height:56px}
 .wordmark{font-size:13px;font-weight:800;letter-spacing:.16em;color:var(--ink)}
 .spacer{flex:1}
-.tilt{height:32px;padding:0 12px;border:0;border-radius:999px;background:var(--surface);color:var(--ink2);font-size:13px;font-weight:600;box-shadow:var(--shadow)}
+.tilt{width:36px;height:36px;padding:0;border:0;border-radius:50%;background:var(--surface);color:var(--ink2);display:flex;align-items:center;justify-content:center;flex:none;box-shadow:var(--shadow)}
 .avatar{width:36px;height:36px;padding:0;border:0;border-radius:50%;background:var(--brand-tint);color:var(--brand-ink);font-size:15px;font-weight:700;overflow:hidden;display:flex;align-items:center;justify-content:center;flex:none}
 .avatar img{width:100%;height:100%;object-fit:cover;display:block}
 .acct{position:absolute;top:52px;right:12px;z-index:45;width:240px;padding:6px;border-radius:18px;background:var(--surface);box-shadow:0 12px 40px rgba(0,0,0,.16)}
@@ -72,40 +72,35 @@ p,h1,h2{margin:0}
 /* ---- tumbler stage ---- */
 .stage{position:relative;flex:1 0 auto;min-height:0;display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px 20px 12px}
 .cup-wrap{position:relative;flex:1 1 0;min-height:min(240px,34vh);min-height:min(240px,34svh);width:100%;display:flex;align-items:center;justify-content:center}
-.cup{position:relative;z-index:1;height:calc(100% + 18px);margin-top:-18px;max-height:460px;min-height:0;aspect-ratio:220/370;touch-action:none;transform-origin:50% 88%;cursor:grab}
+.cup{position:relative;z-index:1;height:calc(100% + 18px);margin-top:-18px;max-height:560px;min-height:0;aspect-ratio:220/370;touch-action:none;transform-origin:50% 88%;cursor:grab}
 .cup-wrap::before{content:"";position:absolute;left:50%;top:50%;height:min(118%,480px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(closest-side,var(--halo) 0%,var(--halo-mid) 46%,var(--halo-tint) 72%,transparent 100%);pointer-events:none;z-index:0}
-.cup-wrap::after{content:"";position:absolute;left:50%;bottom:6%;width:min(46%,200px);height:18px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(25,31,40,.14),transparent);pointer-events:none;z-index:0}
-body.bg-busy .cup-wrap::before,body.bg-busy .cup-wrap::after,body.editing .cup-wrap::after{display:none}
+body.bg-busy .cup-wrap::before{display:none}
 .cup svg.sil{position:absolute;inset:0;filter:drop-shadow(0 12px 20px rgba(25,31,40,.10))}
 body.bg-busy .cup svg.sil{filter:drop-shadow(0 0 1.2px rgba(255,255,255,.85)) drop-shadow(0 10px 20px rgba(25,31,40,.22))}
 .cup svg.main{position:relative}
 .cup svg{width:100%;height:100%;display:block;overflow:visible}
-.chip{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:999px;background:var(--surface);color:var(--ink2);font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;box-shadow:var(--shadow)}
+.chip{position:absolute;top:4px;left:50%;transform:translateX(-50%);z-index:2;display:inline-flex;align-items:center;gap:8px;height:30px;padding:0 12px;border-radius:999px;background:var(--surface);color:var(--ink2);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;box-shadow:var(--shadow)}
 .chip::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ink3)}
 .chip.ok{background:var(--ok-bg);color:var(--ok);box-shadow:none}
 .chip.ok::before{background:var(--ok)}
 
-/* ---- points card ---- */
-.panel{margin:0 12px 12px;padding:24px 20px 16px;border-radius:28px;background:var(--panel);-webkit-backdrop-filter:blur(20px) saturate(1.4);backdrop-filter:blur(20px) saturate(1.4);box-shadow:var(--shadow)}
-.label{font-size:15px;font-weight:500;color:var(--ink2)}
-.points{display:flex;align-items:baseline;gap:4px;margin-top:6px}
-.points b{font-size:clamp(40px,12vw,52px);font-weight:700;line-height:1.05;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-.points span{font-size:24px;font-weight:700}
-.unlock{margin-top:20px;padding:16px;border-radius:20px;background:var(--fill)}
-.u-row{display:flex;align-items:center;gap:12px}
-.u-thumb{width:44px;height:56px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:14px;background:var(--surface)}
-.u-thumb svg{width:30px;height:48px}
-.u-thumb .sw{width:26px;height:26px}
-.u-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.u-tx small{font-size:13px;font-weight:500;color:var(--ink3)}
-.u-tx b{font-size:16px;font-weight:700;word-break:keep-all}
-.u-left{flex:none;font-size:15px;font-weight:700;color:var(--brand-ink);font-variant-numeric:tabular-nums}
-.bar{margin-top:14px;height:8px;border-radius:4px;background:var(--track);overflow:hidden}
-.bar i{display:block;height:100%;border-radius:4px;background:var(--brand);transition:width .6s cubic-bezier(.2,.8,.2,1)}
-.u-foot{display:flex;justify-content:space-between;margin-top:8px;font-size:13px;color:var(--ink3);font-variant-numeric:tabular-nums}
-.cta,.btn{width:100%;height:56px;border:0;border-radius:16px;background:var(--brand);color:var(--on-brand);font-size:17px;font-weight:600;transition:transform .12s ease,background-color .15s}
-.cta{margin-top:16px}
-.cta:active,.btn:active{background:var(--brand-press);transform:scale(.98)}
+/* ---- points bar (kept small so the tumbler leads) ---- */
+.panel{margin:0 12px 12px;padding:14px 14px 14px 20px;border-radius:24px;background:var(--panel);-webkit-backdrop-filter:blur(20px) saturate(1.4);backdrop-filter:blur(20px) saturate(1.4);box-shadow:var(--shadow)}
+.p-row{display:flex;align-items:center;gap:12px}
+.p-pts{flex:1;min-width:0}
+.label{font-size:13px;font-weight:500;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.points{display:flex;align-items:baseline;gap:3px;margin-top:1px}
+.points b{font-size:30px;font-weight:700;line-height:1.1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.points span{font-size:17px;font-weight:700}
+.cta{flex:none;height:48px;padding:0 18px;border:0;border-radius:14px;background:var(--brand);color:var(--on-brand);font-size:15px;font-weight:600;white-space:nowrap;transition:transform .12s ease,background-color .15s}
+.btn{width:100%;height:56px;border:0;border-radius:16px;background:var(--brand);color:var(--on-brand);font-size:17px;font-weight:600;transition:transform .12s ease,background-color .15s}
+.cta:active,.btn:active{background:var(--brand-press);transform:scale(.97)}
+.unlock{margin-top:12px;padding-right:6px}
+.u-line{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;color:var(--ink3)}
+.u-line b{color:var(--ink);font-weight:600}
+.u-left{flex:none;font-weight:600;color:var(--brand-ink);font-variant-numeric:tabular-nums}
+.bar{margin-top:8px;height:4px;border-radius:2px;background:var(--track);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:2px;background:var(--brand);transition:width .6s cubic-bezier(.2,.8,.2,1)}
 .sw{display:block;width:28px;height:28px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
 
 body.editing .stage{flex:0 0 calc(50% - 64px)}
@@ -220,20 +215,8 @@ body.editing .panel{visibility:hidden}
 @media (max-width:360px){ .grid{grid-template-columns:repeat(4,minmax(0,1fr))} }
 @media (max-height:760px){
   .top{min-height:48px;padding-top:4px}
-  .stage{padding:2px 20px 8px}
-  .stage .chip{position:absolute;top:2px;left:50%;transform:translateX(-50%);z-index:2;height:30px;font-size:13px}
-  .panel{padding:16px 16px 12px;border-radius:24px}
-  .label{font-size:14px}
-  .points{margin-top:2px}
-  .points b{font-size:38px}
-  .points span{font-size:20px}
-  .unlock{margin-top:12px;padding:12px 14px;border-radius:16px}
-  .u-thumb{width:36px;height:46px;border-radius:12px}
-  .u-thumb svg{width:24px;height:38px}
-  .u-tx b{font-size:15px}
-  .bar{margin-top:10px}
-  .u-foot{margin-top:6px;font-size:12px}
-  .cta{margin-top:12px;height:50px;font-size:16px}
+  .stage{padding:2px 20px 6px}
+}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -247,7 +230,7 @@ body.editing .panel{visibility:hidden}
   <header class="top">
     <span class="wordmark">GREEN SIGNAL</span>
     <span class="spacer"></span>
-    <button class="tilt" id="tiltBtn" hidden>기울이면 출렁여요</button>
+    <button class="tilt" id="tiltBtn" aria-label="기울이면 출렁여요" title="기울이면 출렁여요" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="3" width="9" height="16" rx="2" transform="rotate(15 12.5 11)"/><path d="M3 14c0 3 2 5 5 6"/><path d="M21 9c0-3-2-5-5-6"/></svg></button>
     <button class="avatar" id="authBtn" aria-haspopup="true" aria-expanded="false" aria-controls="acct">로그인</button>
     <div class="acct" id="acct" hidden>
       <p class="acct-mail" id="acctMail"></p>
@@ -261,10 +244,11 @@ body.editing .panel{visibility:hidden}
   </section>
 
   <section class="panel" id="panel" aria-label="포인트">
-    <p class="label" id="who">내 포인트</p>
-    <p class="points"><b id="pts">0</b><span>P</span></p>
+    <div class="p-row">
+      <div class="p-pts"><p class="label" id="who">내 포인트</p><p class="points"><b id="pts">0</b><span>P</span></p></div>
+      <button class="cta" id="openEdit">내 텀블러 꾸미기</button>
+    </div>
     <div class="unlock" id="unlock"></div>
-    <button class="cta" id="openEdit">내 텀블러 꾸미기</button>
   </section>
 </main>
 
@@ -814,12 +798,10 @@ function renderPanel(){
   $('#who').textContent = (S.name||UID)+'님의 포인트';
   $('#pts').textContent = S.points.toLocaleString('ko-KR');
   const got = UNLOCKS.filter(u=>u.at<=S.total).length, n = UNLOCKS.find(u=>u.at>S.total), box = $('#unlock');
-  const foot = '<p class="u-foot"><span>모은 포인트 '+S.total.toLocaleString('ko-KR')+'P</span><span>'+got+'/'+UNLOCKS.length+' 해금</span></p>';
-  if(!n){ box.innerHTML = '<div class="u-row"><span class="u-tx"><small>해금 디자인</small><b>모두 열었어요</b></span></div><div class="bar"><i style="width:100%"></i></div>'+foot; return; }
+  if(!n){ box.innerHTML = '<p class="u-line"><span>해금 디자인 <b>모두 열었어요</b></span><span class="u-left">'+got+'/'+UNLOCKS.length+'</span></p><div class="bar"><i style="width:100%"></i></div>'; return; }
   const prev = UNLOCKS.reduce((a,u)=>u.at<=S.total ? Math.max(a,u.at) : a, 0), pct = Math.max(0, Math.min(100, (S.total-prev)/(n.at-prev)*100));
-  box.innerHTML = '<div class="u-row"><span class="u-thumb">'+thumbFor(n)+'</span><span class="u-tx"><small>다음 해금</small><b>'+n.name+'</b></span><span class="u-left">'+(n.at-S.total)+'P 남음</span></div>'
-    + '<div class="bar" role="progressbar" aria-label="다음 해금까지 진행도" aria-valuemin="'+prev+'" aria-valuemax="'+n.at+'" aria-valuenow="'+S.total+'"><i style="width:'+pct+'%"></i></div>'
-    + foot;
+  box.innerHTML = '<p class="u-line"><span>다음 해금 <b>'+n.name+'</b></span><span class="u-left">'+(n.at-S.total)+'P 남음</span></p>'
+    + '<div class="bar" role="progressbar" aria-label="다음 해금까지 진행도" aria-valuemin="'+prev+'" aria-valuemax="'+n.at+'" aria-valuenow="'+S.total+'"><i style="width:'+pct+'%"></i></div>';
 }
 function animatePts(from){
   const to = S.points, el = $('#pts'); if(reduce || from===to){ el.textContent = to.toLocaleString('ko-KR'); return; }
