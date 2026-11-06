@@ -54,7 +54,7 @@ p,h1,h2{margin:0}
 #bg img{position:absolute;max-width:none;user-select:none}
 
 /* ---- top bar ---- */
-.screen{position:relative;z-index:1;height:100%;max-width:480px;margin:0 auto;display:flex;flex-direction:column}
+.screen{position:relative;z-index:1;height:100%;max-width:480px;margin:0 auto;display:flex;flex-direction:column;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .top{position:relative;display:flex;align-items:center;gap:8px;padding:8px 16px 0 20px;min-height:56px}
 .wordmark{font-size:13px;font-weight:800;letter-spacing:.16em;color:var(--ink)}
 .spacer{flex:1}
@@ -67,8 +67,8 @@ p,h1,h2{margin:0}
 .acct-out:active{background:var(--fill)}
 
 /* ---- tumbler stage ---- */
-.stage{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px 20px 12px}
-.cup-wrap{position:relative;flex:1 1 0;min-height:0;width:100%;display:flex;align-items:center;justify-content:center}
+.stage{position:relative;flex:1 0 auto;min-height:0;display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px 20px 12px}
+.cup-wrap{position:relative;flex:1 1 0;min-height:min(240px,34vh);min-height:min(240px,34svh);width:100%;display:flex;align-items:center;justify-content:center}
 .cup{position:relative;height:100%;max-height:380px;min-height:0;aspect-ratio:220/370;touch-action:none;transform-origin:50% 88%;cursor:grab}
 .cup svg.sil{position:absolute;inset:0;filter:drop-shadow(0 12px 20px rgba(25,31,40,.10))}
 body.bg-busy .cup svg.sil{filter:drop-shadow(0 0 1.2px rgba(255,255,255,.85)) drop-shadow(0 10px 20px rgba(25,31,40,.22))}
@@ -103,6 +103,7 @@ body.bg-busy .cup svg.sil{filter:drop-shadow(0 0 1.2px rgba(255,255,255,.85)) dr
 .sw{display:block;width:28px;height:28px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
 
 body.editing .stage{flex:0 0 calc(50% - 64px)}
+body.editing .cup-wrap{min-height:0}
 body.editing .panel{visibility:hidden}
 
 /* ---- bottom sheet ---- */
@@ -211,6 +212,23 @@ body.editing .panel{visibility:hidden}
 
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){ .panel{background:var(--surface)} }
 @media (max-width:360px){ .grid{grid-template-columns:repeat(4,minmax(0,1fr))} }
+@media (max-height:760px){
+  .top{min-height:48px;padding-top:4px}
+  .stage{padding:2px 20px 8px}
+  .stage .chip{position:absolute;top:2px;left:50%;transform:translateX(-50%);z-index:2;height:30px;font-size:13px}
+  .panel{padding:16px 16px 12px;border-radius:24px}
+  .label{font-size:14px}
+  .points{margin-top:2px}
+  .points b{font-size:38px}
+  .points span{font-size:20px}
+  .unlock{margin-top:12px;padding:12px 14px;border-radius:16px}
+  .u-thumb{width:36px;height:46px;border-radius:12px}
+  .u-thumb svg{width:24px;height:38px}
+  .u-tx b{font-size:15px}
+  .bar{margin-top:10px}
+  .u-foot{margin-top:6px;font-size:12px}
+  .cta{margin-top:12px;height:50px;font-size:16px}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
