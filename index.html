@@ -17,7 +17,7 @@
   --brand:#2E6B22; --brand-press:#24561B; --on-brand:#FFFFFF; --brand-tint:#EBF4E6; --brand-ink:#2E6B22;
   --ok-bg:#EBF4E6; --ok:#2E6B22; --danger:#E5484D; --focus:#2E6B22;
   --toast:rgba(25,31,40,.94); --shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.06);
-  --halo:rgba(255,255,255,.5); --halo-mid:rgba(255,255,255,.2); --halo-tint:rgba(255,255,255,0);
+  --halo:rgba(255,255,255,.5); --halo-mid:rgba(255,255,255,.2); --halo-tint:rgba(255,255,255,0); --floor:rgba(25,31,40,.2);
   --font:'Wanted Sans Variable','Wanted Sans',-apple-system,BlinkMacSystemFont,system-ui,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
   color-scheme:light;
   box-sizing:border-box;
@@ -31,7 +31,7 @@
     --brand:#367D29; --brand-press:#2D6922; --on-brand:#FFFFFF; --brand-tint:rgba(120,190,100,.16); --brand-ink:#9FD58C;
     --ok-bg:rgba(120,190,100,.16); --ok:#9FD58C; --danger:#FF6B70; --focus:#9FD58C;
     --toast:rgba(62,62,72,.96); --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.3);
-  --halo:rgba(255,255,255,.06); --halo-mid:rgba(255,255,255,.02); --halo-tint:rgba(255,255,255,0);
+  --halo:rgba(255,255,255,.06); --halo-mid:rgba(255,255,255,.02); --halo-tint:rgba(255,255,255,0); --floor:rgba(0,0,0,.55);
     color-scheme:dark;
   }
 }
@@ -41,7 +41,7 @@
   --brand:#367D29; --brand-press:#2D6922; --on-brand:#FFFFFF; --brand-tint:rgba(120,190,100,.16); --brand-ink:#9FD58C;
   --ok-bg:rgba(120,190,100,.16); --ok:#9FD58C; --danger:#FF6B70; --focus:#9FD58C;
   --toast:rgba(62,62,72,.96); --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.3);
-  --halo:rgba(255,255,255,.06); --halo-mid:rgba(255,255,255,.02); --halo-tint:rgba(255,255,255,0);
+  --halo:rgba(255,255,255,.06); --halo-mid:rgba(255,255,255,.02); --halo-tint:rgba(255,255,255,0); --floor:rgba(0,0,0,.55);
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box}
@@ -75,8 +75,9 @@ p,h1,h2{margin:0}
 .cup{position:relative;z-index:1;height:calc(100% + 18px);margin-top:-18px;max-height:560px;min-height:0;aspect-ratio:220/370;touch-action:none;transform-origin:50% 88%;cursor:grab}
 .cup-wrap::before{content:"";position:absolute;left:50%;top:50%;height:min(118%,480px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(closest-side,var(--halo) 0%,var(--halo-mid) 50%,var(--halo-tint) 100%);pointer-events:none;z-index:0}
 body.bg-busy .cup-wrap::before{display:none}
-.cup svg.sil{position:absolute;inset:0;filter:drop-shadow(0 12px 20px rgba(25,31,40,.10))}
-body.bg-busy .cup svg.sil{filter:drop-shadow(0 0 1.2px rgba(255,255,255,.85)) drop-shadow(0 10px 20px rgba(25,31,40,.22))}
+.floor{position:absolute;z-index:0;width:0;height:0;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(closest-side,var(--floor),transparent);pointer-events:none}
+.cup svg.sil{position:absolute;inset:0;filter:drop-shadow(0 2px 10px rgba(25,31,40,.08))}
+body.bg-busy .cup svg.sil{filter:drop-shadow(0 0 1.2px rgba(255,255,255,.85)) drop-shadow(0 2px 14px rgba(25,31,40,.2))}
 .cup svg.main{position:relative}
 .cup svg{width:100%;height:100%;display:block;overflow:visible}
 .chip{position:absolute;top:4px;left:50%;transform:translateX(-50%);z-index:2;display:inline-flex;align-items:center;gap:8px;height:30px;padding:0 12px;border-radius:999px;background:var(--surface);color:var(--ink2);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;box-shadow:var(--shadow)}
@@ -240,7 +241,7 @@ body.editing .panel{visibility:hidden}
 
   <section class="stage" aria-label="내 텀블러">
     <p class="chip" id="status" role="status"></p>
-    <div class="cup-wrap"><div class="cup" id="cup" aria-label="텀블러. 좌우로 끌면 음료가 출렁여요" role="img"></div></div>
+    <div class="cup-wrap"><div class="floor" id="floor" aria-hidden="true"></div><div class="cup" id="cup" aria-label="텀블러. 좌우로 끌면 음료가 출렁여요" role="img"></div></div>
   </section>
 
   <section class="panel" id="panel" aria-label="포인트">
@@ -612,7 +613,7 @@ function cupSVG(cup, o){
   if(st.pat) d+='<pattern id="'+P+'p" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><rect width="12" height="12" fill="#F7F2EC"/><rect width="5" height="12" fill="#D2504A"/></pattern>';
   if(o.main) d+='<filter id="'+P+'f" x="-50%" y="-300%" width="200%" height="700%"><feGaussianBlur stdDeviation="4"/></filter>';
   d+='</defs>';
-  d+='<ellipse cx="100" cy="'+(BOTTOM+6)+'" rx="'+(hB+14)+'" ry="6" fill="#2B221D" fill-opacity=".16"'+(o.main?' filter="url(#'+P+'f)"':'')+'/>';
+  if(!o.main) d+='<ellipse cx="100" cy="'+(BOTTOM+6)+'" rx="'+(hB+14)+'" ry="6" fill="#2B221D" fill-opacity=".16"/>';
   d+='<path d="'+body+'" fill="url(#'+P+'g)"/>';
 
   let strawTop='';
@@ -706,7 +707,17 @@ function cupSVG(cup, o){
 }
 
 /* ---------- main tumbler + physics ---------- */
-const cupEl = $('#cup');
+const cupEl = $('#cup'), floorEl = $('#floor');
+// the floor shadow sits outside the tumbler so it stays put while the tumbler tilts
+function placeFloor(s){
+  s = s || find(SHAPES, view().cup.shape);
+  const k = cupEl.offsetHeight/370, hB = s.p[s.p.length-1][1];
+  floorEl.style.width = ((hB+18)*2*k).toFixed(1)+'px';
+  floorEl.style.height = (16*k).toFixed(1)+'px';
+  floorEl.style.left = (cupEl.offsetLeft + cupEl.offsetWidth/2).toFixed(1)+'px';
+  floorEl.style.top = (cupEl.offsetTop + (BOTTOM+6+70)*k).toFixed(1)+'px';
+}
+if(window.ResizeObserver) new ResizeObserver(()=>placeFloor()).observe(cupEl);
 const PH = {th:0, om:0, amp:1, ph:0};
 let M = null, disp = 0;
 const level = () => remainMs()/COOLDOWN;
@@ -721,6 +732,7 @@ function mountCup(){
   const busy = v.bg.type==='image' || v.bg.type==='pattern';
   cupEl.innerHTML = silSVG(v.cup, busy) + cupSVG(v.cup, {level:disp, theta:PH.th, amp:PH.amp, phase:PH.ph, main:true}).replace('<svg ', '<svg class="main" ');
   const r = cupEl.querySelector('svg.main'), s = find(SHAPES, v.cup.shape);
+  placeFloor(s);
   M = {fullY:fullYOf(s, v.cup), lqc:r.querySelector('.lqc'), lq:r.querySelector('.lq'), fm:r.querySelector('.fm'), dz:r.querySelector('.dz'), mn:r.querySelector('.mn'), fl:r.querySelector('.fl'),
        bub:[...r.querySelectorAll('.bub circle')].map(c=>({el:c, y:+c.getAttribute('cy'), r:+c.getAttribute('r')}))};
 }
